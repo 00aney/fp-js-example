@@ -47,3 +47,25 @@ function _each(list, iter) {
   }
   return list;
 }
+
+var _map = _curryr(_map),
+  _each = _curryr(_each),
+  _filter = _curryr(_filter);
+
+var _pairs = _map(function (var, key) { return [key, val]; });
+
+var slice = Array.prototype.slice;
+function _rest(list, num) {
+  return slice.call(list, num || 1);
+}
+
+function _reduce(list, iter, memo) {
+  if (arguments.length == 2) {
+    memo = list[0];
+    list = _rest(list);
+  }
+  _each(list, function(val) {
+    memo = iter(memo, val);
+  });
+  return memo;
+}
