@@ -83,3 +83,25 @@ function _go(arg) {
   var fns = _rest(arguments);
   return _pipe.apply(null, fns)(arg);
 }
+
+var _values = _map(_identity);
+
+function _identity(val) {
+   return val;
+}
+
+var _pluck = _curryr(function(data, key) {
+  return _map(data, _get(key));
+});
+
+function _negate(func) {
+  return function(val) {
+    return !func(val);
+  }
+}
+
+var _reject = _curryr(function(data, predi) {
+   return _filter(data, _negate(predi));
+});
+
+var _compact = _filter(_identity);
