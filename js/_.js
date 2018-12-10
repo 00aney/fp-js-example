@@ -105,3 +105,27 @@ var _reject = _curryr(function(data, predi) {
 });
 
 var _compact = _filter(_identity);
+
+function _min(data) {
+  return _reduce(data, function(a, b) {
+    return a < b ? a : b;     
+  });
+}
+
+function _max(data) {
+  return _reduce(data, function(a, b) {
+    return a > b ? a : b;     
+  });
+}
+
+function _min_by(data, iter) {
+  return _reduce(data, function(a, b) {
+    return iter(a) < iter(b) ? a : b;     
+  });
+}
+
+function _max_by(data, iter) {
+  return _reduce(data, function(a, b) {
+    return iter(a) > iter(b) ? a : b;     
+  });
+}
