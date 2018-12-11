@@ -6,18 +6,18 @@ function _curry(fn) {
 
 function _curryr(fn) {
   return function(a, b) {
-    return arguments.length == 2? fn(a, b) : function(b) { return fn(b, a); };
+    return arguments.length == 2 ? fn(a, b) : function(b) { return fn(b, a); };
   }
 }
 
-var _get = _curryr(function(obj,key) {
+var _get = _curryr(function(obj, key) {
   return obj == null ? undefined : obj[key];
 });
 
 function _filter(list, predi) {
   var new_list = [];
   _each(list, function(val) {
-    if(predi(val)) new_list.push(val);
+    if (predi(val)) new_list.push(val);
   });
   return new_list;
 }
@@ -52,7 +52,7 @@ var _map = _curryr(_map),
   _each = _curryr(_each),
   _filter = _curryr(_filter);
 
-var _pairs = _map(function (var, key) { return [key, val]; });
+var _pairs = _map(function (val, key) { return [key, val]; });
 
 var slice = Array.prototype.slice;
 function _rest(list, num) {
@@ -87,7 +87,7 @@ function _go(arg) {
 var _values = _map(_identity);
 
 function _identity(val) {
-   return val;
+  return val;
 }
 
 var _pluck = _curryr(function(data, key) {
@@ -101,31 +101,59 @@ function _negate(func) {
 }
 
 var _reject = _curryr(function(data, predi) {
-   return _filter(data, _negate(predi));
+  return _filter(data, _negate(predi));
 });
 
 var _compact = _filter(_identity);
 
-function _min(data) {
-  return _reduce(data, function(a, b) {
-    return a < b ? a : b;     
-  });
+var _find = _curryr(function(list, predi) {
+  var keys = _keys(list);
+  for (var i = 0, len = keys.length; i < len; i++) {
+    var val = list[keys[i]];
+    if (predi(val)) return val;
+  }
+});
+
+var _find_index = _curryr(function(list, predi) {
+  var keys = _keys(list);
+  for (var i = 0, len = keys.length; i < len; i++) {
+    if (predi(list[keys[i]])) return i;
+  }
+  return -1;
+});
+
+function _some(data, predi) {
+  return _find_index(data, predi || _identity) != -1;
 }
 
-function _max(data) {
-  return _reduce(data, function(a, b) {
-    return a > b ? a : b;     
-  });
+function _every(data, predi) {
+  return _find_index(data, _negate(predi || _identity)) == -1;
 }
 
-function _min_by(data, iter) {
-  return _reduce(data, function(a, b) {
-    return iter(a) < iter(b) ? a : b;     
-  });
+
+function _push(obj, key, val) {
+  (obj[key] = obj[key] || []).push(val);
+  return obj;
 }
 
-function _max_by(data, iter) {
-  return _reduce(data, function(a, b) {
-    return iter(a) > iter(b) ? a : b;     
-  });
-}
+var _group_by = _curryr(function(data, iter) {
+  return _reduce(data, function(grouped, val) {
+    return _push(grouped, iter(val), val);
+  }, {});
+});
+
+
+var _inc = function(count, key) {
+  count[key] ? count[key]++ : count[key] = 1;
+  return count;
+};
+
+var _count_by = _curryr(function(data, iter) {
+  return _reduce(data, function(count, val) {
+    return _inc(count, iter(val));
+  }, {});
+});
+
+var _head = function(list) {
+  return list[0];
+};
